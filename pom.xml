@@ -9,5 +9,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>section2</module>
+        <module>section4</module>
     </modules>
 </project>
