@@ -11,5 +11,6 @@
         <module>section2</module>
         <module>section4</module>
         <module>section5</module>
+        <module>section7</module>
     </modules>
 </project>
