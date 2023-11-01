@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class GradebookController {
 
@@ -34,12 +36,18 @@ public class GradebookController {
 
     @GetMapping("/studentInformation/{id}")
     public String studentInformation(@PathVariable int id, Model m) {
+        if (!studentService.checkIfStudentIsNull(id)) {
+            return "error";
+        }
+
+        studentService.configureStudentInformationModel(id, m);
+
         return "studentInformation";
     }
 
     @GetMapping("/delete/student/{id}")
     public String deleteStudent(@PathVariable int id, Model m) {
-        if(!studentService.checkIfStudentIsNull(id)) {
+        if (!studentService.checkIfStudentIsNull(id)) {
             return "error";
         }
         studentService.deleteStudent(id);
@@ -48,4 +56,36 @@ public class GradebookController {
         return "index";
     }
 
+    @PostMapping("/grades")
+    public String createGrade(@RequestParam("grade") double grade,
+                              @RequestParam("gradeType") String gradeType,
+                              @RequestParam("studentId") int studentId,
+                              Model m) {
+        if (!studentService.checkIfStudentIsNull(studentId)) {
+            return "error";
+        }
+
+        boolean success = studentService.createGrade(grade, studentId, gradeType);
+        if (!success) {
+            return "error";
+        }
+
+        studentService.configureStudentInformationModel(studentId, m);
+
+
+        return "studentInformation";
+    }
+
+    @GetMapping("/grades/{id}/{gradeType}")
+    public String deleteGrade(@PathVariable int id, @PathVariable String gradeType, Model m) {
+        int studentId = studentService.deleteGrade(id, gradeType);
+
+        if(studentId == 0) {
+            return "error";
+        }
+
+        studentService.configureStudentInformationModel(studentId, m);
+
+        return "studentInformation";
+    }
 }
